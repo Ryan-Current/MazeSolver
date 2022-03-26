@@ -7,8 +7,8 @@
 
 #ifndef _QUEUEADT_H_
 #define _QUEUEADT_H_
-
 #include <stdbool.h>
+
 
 // Define QueueADT type ONLY IF _not_ compiling the module implementation file.
 //
@@ -23,7 +23,13 @@
 /// QueueADT is a pointer to an abstract queue data structure whose
 /// payload data type is 'generic', implemented as void * in this interface.
 
-typedef struct { } * QueueADT;
+typedef struct 
+{
+    void ** currentQueue; 
+    int currentSize; 
+    int maxSize; 
+    // int (* cmp)(const void * a, const void * b); 
+} *QueueADT;
 
 #endif
 
@@ -46,7 +52,7 @@ typedef struct { } * QueueADT;
 ///    ordering this queue, or NULL if standard FIFO behavior is desired
 /// @return a QueueADT instance, or NULL if the allocation fails
 
-QueueADT que_create( int (*cmp)(const void * a, const void * b) );
+QueueADT que_create(); // int (*cmp)(const void * a, const void * b) );
 
 
 /// Tear down and deallocate the supplied QueuADT.

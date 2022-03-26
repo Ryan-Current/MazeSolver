@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
-#define INITIAL_SIZE 64
+#define INITIAL_SIZE 2
 
 /// queue_s is a struct that represents a queue data structure whose payload
 /// data type is 'generic'. 
@@ -21,14 +21,14 @@
 /// currentSize represents the number of items in the queue
 /// maxSize represents the maximum number of items that can fit in the queue 
 /// given the current memory allocation
-/// cmp represents a pointer to the compare function that this ADT uses to
-/// order the queue
+// cmp represents a pointer to the compare function that this ADT uses to
+// order the queue
 struct queue_s 
 {
     void ** currentQueue; 
     int currentSize; 
     int maxSize; 
-    int (* cmp)(const void * a, const void * b); 
+    // int (* cmp)(const void * a, const void * b); 
 }; 
 
 
@@ -38,7 +38,7 @@ typedef struct queue_s * QueueADT;
 
 
 /// Create a QueueADT that uses the supplied function as a comparison routine.
-QueueADT que_create( int (*cmp)(const void * a, const void * b) )
+QueueADT que_create( ) // int (*cmp)(const void * a, const void * b) )
 {
     QueueADT new = (QueueADT)malloc(sizeof(struct queue_s)); 
     assert(new && "Allocation of new QueueADT memory failed"); 
@@ -46,7 +46,7 @@ QueueADT que_create( int (*cmp)(const void * a, const void * b) )
     assert(new->currentQueue && "Allocation of QueueADT list memory failed");  
     new->currentSize = 0; 
     new->maxSize = INITIAL_SIZE; 
-    new->cmp = cmp; 
+    // new->cmp = cmp; 
     return new; 
 }
 
@@ -72,36 +72,36 @@ void que_insert( QueueADT queue, void * data )
 {
     if(queue->currentSize != queue->maxSize)
     {
-        if(queue->cmp == NULL)
-        {
+        // if(queue->cmp == NULL)
+        // {
             queue->currentQueue[queue->currentSize] = data;
             queue->currentSize++; 
-        }
-        else
-        {
-            for(int i = 0; i < queue->currentSize; i++)
-            {
-                if(queue->cmp(data, queue->currentQueue[i]) <= 0)
-                {
-                    for(int j = queue->currentSize; j > i; j--)
-                    {
-                        queue->currentQueue[j] = queue->currentQueue[j-1]; 
-                    }
-                    queue->currentQueue[i] = data; 
-                    queue->currentSize++; 
-                    return; 
-                }
-            }
-            queue->currentQueue[queue->currentSize] = data;
-            queue->currentSize++; 
-        }
+        // }
+        // else
+        // {
+        //     for(int i = 0; i < queue->currentSize; i++)
+        //     {
+        //         if(queue->cmp(data, queue->currentQueue[i]) <= 0)
+        //         {
+        //             for(int j = queue->currentSize; j > i; j--)
+        //             {
+        //                 queue->currentQueue[j] = queue->currentQueue[j-1]; 
+        //             }
+        //             queue->currentQueue[i] = data; 
+        //             queue->currentSize++; 
+        //             return; 
+        //         }
+        //     }
+        //     queue->currentQueue[queue->currentSize] = data;
+        //     queue->currentSize++; 
+        // }
     }
     else
     {
-        void * temp = (void *)realloc(queue->currentQueue, (sizeof(void *)*(queue->maxSize + INITIAL_SIZE))); 
+        void * temp = (void *)realloc(queue->currentQueue, (sizeof(queue->currentQueue)*2)); 
         queue->currentQueue = temp; 
         assert(queue->currentQueue && "Reallocation of memory failed"); 
-        queue->maxSize = queue->maxSize + INITIAL_SIZE; 
+        queue->maxSize = queue->maxSize * 2; 
         que_insert(queue, data); 
     }
 } 
