@@ -6,36 +6,21 @@
 // Author:  Ryan Current rjc7379
 //
 
-#include"QueueADT.h"
-
-/// maze_node_s is a struct that represents a node on the graph. 
-/// currentC represents the current nodes x coodinate
-/// currentR represents the current nodes y coodinate
-/// prviousC represents the previous nodes x coodinate
-/// prviousR represents the previous nodes y coodinate
-struct maze_node_s
-{
-    unsigned short currentC; 
-    unsigned short currentR; 
-    unsigned short previousC; 
-    unsigned short previousR; 
-}; 
-
-typedef struct maze_node_s * MazeNode; 
+#include"MazeQueue.h"
 
 /// maze_node_s is a struct that represents the current Maze. 
 /// maze is a 2D array of shorts that represents the current maze
-/// queue is a QueueADT that represents the current queue. 
+/// queue is a MazeQueue that represents the current queue. 
 struct maze_s
 {
     char ** maze; 
-    QueueADT queue; 
+    MazeQueue queue; 
     unsigned short maxC; 
     unsigned short maxR; 
 };
 
 typedef struct maze_s * Maze; 
-#define _MAZESOLVER_H_
+#define _MAZE_IMPL_
 #include "MazeSolver.h"
 
 #define  _GNU_SOURCE
@@ -49,11 +34,20 @@ typedef struct maze_s * Maze;
 #define MAZE_INITIAL_ROWS 2
 
 
+/// determines wheather the current node is at the solution
+/// @param maze the maze that the node exists in
+/// @param node the node to check 
+bool Node_Is_Solution(Maze maze, MazeNode node)
+{
+    return ((maze->maxC == node->currentC) && (maze->maxR == node->currentR)); 
+}
+
+
 /// Destroys the Maze and free's any memory that was allocated for the maze
 void Destroy_Maze(Maze maze)
 {
-    printf("IMPLEMENT THIS FUNCTION%d \n", maze->maxC); 
-
+    if(maze->maxC != -1)
+        printf("IMPLEMENT DESTROY MAZE FUNTION\n"); 
 }
 
 
@@ -62,7 +56,8 @@ void Destroy_Maze(Maze maze)
 /// in 
 void Solve_Maze(Maze maze)
 {
-    printf("IMPLEMENT THIS FUNCTION%d \n", maze->maxC); 
+    if(maze->maxC != -1)
+        printf("IMPLEMENT SOLVE FUNCTION \n"); 
 
 }
 
@@ -103,20 +98,22 @@ void Pretty_Print_Maze(Maze maze)
 /// @param node the node to check
 bool maze_node_checked(Maze maze, MazeNode node)
 {
-    printf("IMPLEMENT THIS FUNCTION%d \n", maze->maxC); 
-    printf("IMPLEMENT THIS FUNCTION%d \n", node->currentC); 
+    if(maze->maxC != -1)
+        if(node->currentC != -1)
+            printf("IMPLEMENT MAZE NODE CHECKED FUNCTION\n"); 
     return false; 
 }
 
 
-/// gets the current neighbors and adds them to the QueueADT within the maze
+/// gets the current neighbors and adds them to the MazeQueue within the maze
 /// that is passed in
 /// @param maze the maze that is being solved. 
 /// @param node the node to get the neighbors of
 void get_neighbors(Maze maze, MazeNode node)
 {
-    printf("IMPLEMENT THIS FUNCTION%d \n", maze->maxC); 
-    printf("IMPLEMENT THIS FUNCTION%d \n", node->currentC); 
+    if(maze->maxC != -1)
+        if(node->currentC != -1)
+            printf("IMPLEMENT GET NEIGHBORS\n"); 
 
 }
 
@@ -179,14 +176,6 @@ void load_maze(Maze maze, FILE * file)
         line_size = getline(&buffer, &bufferSize, file);  
     }
     
-}
-
-/// determines wheather the current node is at the solution
-/// @param maze the maze that the node exists in
-/// @param node the node to check 
-bool Node_Is_Solution(Maze maze, MazeNode node)
-{
-    return ((maze->maxC == node->currentC) && (maze->maxR == node->currentR)); 
 }
 
 

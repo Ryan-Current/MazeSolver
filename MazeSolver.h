@@ -8,16 +8,17 @@
 #ifndef _MAZESOLVER_H_
 #define _MAZESOLVER_H_
 #include <stdio.h>  
-#include "QueueADT.h"
+#include "MazeQueue.h"
 
 #ifndef _MAZE_IMPL_
+#define _MAZE_IMPL_
 
 /// Maze is a struct that contains information about the maze that is currently 
 /// being solved. 
 typedef struct 
 { 
     char ** maze; 
-    QueueADT queue; 
+    MazeQueue queue; 
     unsigned int maxC; 
     unsigned int maxR;
 } * Maze; 
