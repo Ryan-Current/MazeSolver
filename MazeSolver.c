@@ -70,7 +70,30 @@ void Solve_Maze(Maze maze)
 /// Prints the maze to stdout with a border and easier to see characters. 
 void Pretty_Print_Maze(Maze maze)
 {
-    printf("IMPLEMENT THIS FUNCTION%d \n", maze->maxC); 
+    // top border
+    printf("|-"); 
+    for(int i = 0; i < maze->maxC; i++)
+        printf("--"); 
+    printf("|\n"); 
+
+    // actual maze with left and right border
+    for(int i = 0; i < maze->maxR; i++)
+    {
+        if(i != 0) printf("| "); 
+        else printf("  "); 
+        for(int j = 0; j < maze->maxC; j++)
+        {
+            printf("%c ", maze->maze[i][j]); 
+        }
+        if(i != maze->maxR-1) printf("|\n"); 
+        else printf(" \n"); 
+    }
+
+    //bottom border
+    printf("|-"); 
+    for(int i = 0; i < maze->maxC; i++)
+        printf("--"); 
+    printf("|\n"); 
 
 }
 
@@ -113,7 +136,6 @@ void realloc_Maze(Maze maze)
 /// @param file the file to load
 void load_maze(Maze maze, FILE * file)
 {
-    printf("initializing\n"); 
     // Initialize values for parsing 
     char * buffer = NULL;
     size_t bufferSize = 0;
@@ -129,34 +151,33 @@ void load_maze(Maze maze, FILE * file)
         }
     }
 
-    printf("Line Size: %d\n", maze->maxC); 
-    
-    // // read in lines 
-    // while(line_size > 0)
-    // {
-    //     maze->maxR++; 
-    //     if(sizeof(* maze->maze)/sizeof(char *) == maze->maxR)
-    //     {
-    //         realloc_Maze(maze); 
-    //     }
+    // read in lines 
+    while(line_size > 0)
+    {
+        if(sizeof(* maze->maze)/sizeof(char **) == maze->maxR)
+        {
+            realloc_Maze(maze); 
+        }
 
-    //     int j = 0; 
-    //     for(ssize_t i = 0; i < line_size; i++)
-    //     {
-    //         if(buffer[i] == '0')
-    //         {
-    //             maze->maze[maze->maxR][j] = '.';
-    //             j++;  
-    //         }
-    //         if(buffer[i] == '1')  
-    //         {
-    //             maze->maze[maze->maxR][j] = '#';
-    //             j++;  
-    //         }
-    //     }
-    //     // line_size = getline(); 
-    // }
+        maze->maze[maze->maxR] = (char *)malloc(maze->maxC * sizeof(char *)); 
 
+        int j = 0; 
+        for(ssize_t i = 0; i < line_size; i++)
+        {
+            if(buffer[i] == '0')
+            {
+                maze->maze[maze->maxR][j] = '.';
+                j++;  
+            }
+            if(buffer[i] == '1')  
+            {
+                maze->maze[maze->maxR][j] = '#';
+                j++;  
+            }
+        }
+        maze->maxR++; 
+        line_size = getline(&buffer, &bufferSize, file);  
+    }
     
 }
 

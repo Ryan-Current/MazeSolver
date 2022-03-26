@@ -16,8 +16,8 @@
 
 int main()
 {
-    printf("loading file \n"); 
-    FILE * fp= fopen("./examples/full4x4", "r"); 
-    Create_Maze(fp); 
+    FILE * fp= fopen("./examples/zigzag4x4", "r"); 
+    Maze maze = Create_Maze(fp); 
+    Pretty_Print_Maze(maze); 
     fclose(fp); 
 }
