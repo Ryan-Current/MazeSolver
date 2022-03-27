@@ -19,10 +19,10 @@
 /// maze_node_s is a struct that represents a node on the graph. 
 struct maze_node_s
 {
-    unsigned short currentC; 
     unsigned short currentR; 
-    unsigned short previousC; 
+    unsigned short currentC; 
     unsigned short previousR; 
+    unsigned short previousC; 
 }; 
 
 typedef struct maze_node_s * MazeNode; 
@@ -47,11 +47,22 @@ MazeQueue que_create()
 {
     MazeQueue new = (MazeQueue)malloc(sizeof(struct queue_s)); 
     assert(new && "Allocation of new MazeQueue memory failed"); 
-    new->currentQueue = (MazeNode)malloc(sizeof(MazeNode)*INITIAL_SIZE);
+    new->currentQueue = (MazeNode *)malloc(sizeof(MazeNode)*INITIAL_SIZE);
     assert(new->currentQueue && "Allocation of MazeQueue list memory failed"); 
-    new->currentIndex;  
+    new->currentIndex = 0;  
     new->currentLength = 0; 
     new->maxSize = INITIAL_SIZE; 
+    return new; 
+}
+
+/// creates a new MazeNode and returns a pointer to it
+MazeNode que_create_node(short currentR, short currentC, short previousR, short previousC)
+{
+    MazeNode new = (MazeNode)malloc(sizeof(MazeNode)); 
+    new->currentR = currentR; 
+    new->currentC = currentC; 
+    new->previousR = previousR; 
+    new->previousC = previousC; 
     return new; 
 }
 
@@ -59,6 +70,10 @@ MazeQueue que_create()
 /// Tear down and deallocate the supplied MazeQueue.
 void que_destroy( MazeQueue queue )
 {
+    for(int i = 0; i < queue->currentIndex + queue->currentLength; i++)
+    {
+        free(queue->currentQueue[i]); 
+    }
     free(queue->currentQueue); 
     free(queue); 
 }
@@ -74,7 +89,7 @@ void que_insert( MazeQueue queue, MazeNode data )
     }
     else
     {
-        MazeNode temp = (MazeNode)realloc(queue->currentQueue, (sizeof(queue->currentQueue)*2)); 
+        MazeNode * temp = (MazeNode *)realloc(queue->currentQueue, (sizeof(queue->currentQueue)*2)); 
         queue->currentQueue = temp; 
         assert(queue->currentQueue && "Reallocation of memory failed"); 
         queue->maxSize = queue->maxSize * 2; 
@@ -92,12 +107,12 @@ MazeNode que_next( MazeQueue queue )
 
 
 /// Indicates if the queue has ever had or currently has a MazeNode 
-bool que_has_or_had( MazeQueue queue, MazeNode node )
+bool que_has_or_had( MazeQueue queue, short currentR, short currentC )
 {
     for(int i = 0; i < queue->currentIndex + queue->currentLength; i++)
     {
-        if(queue->currentQueue[i]->currentC == node->currentC &&
-           queue->currentQueue[i]->currentR == node->currentR)
+        if(queue->currentQueue[i]->currentC == currentC &&
+           queue->currentQueue[i]->currentR == currentR)
                 return true; 
     }
     return false; 

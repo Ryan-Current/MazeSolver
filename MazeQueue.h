@@ -49,6 +49,15 @@ typedef struct
 MazeQueue que_create(); 
 
 
+/// creates a new MazeNode and returns a pointer to it
+/// @param currentC current column 
+/// @param currentR current row
+/// @param previousC previous column
+/// @param previousR previous row
+/// @return MazeNode pointer of the current node
+MazeNode que_create_node(short currentR, short currentC, short previousR, short previousC); 
+
+
 /// Tear down and deallocate the supplied QueuADT.
 ///
 /// @param queue - the MazeQueue to be manipulated
@@ -70,10 +79,12 @@ void que_insert( MazeQueue queue, MazeNode data );
 ///     with an error message.
 MazeNode que_next( MazeQueue queue );
 
+
 /// Indicates if the queue has ever had or currently has a MazeNode
 /// @param queue the queue to check 
-/// @param node the node to check if has existed in the queue
-bool que_has_or_had( MazeQueue queue, MazeNode node ); 
+/// @param currentR the row of the node to check
+/// @param currentC the column of the node to check
+bool que_has_or_had( MazeQueue queue, short currentR, short currentC ); 
 
 
 /// Indicate whether or not the supplied Queue is empty

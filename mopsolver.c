@@ -16,8 +16,9 @@
 
 int main()
 {
-    FILE * fp= fopen("./examples/zigzag4x4", "r"); 
+    FILE * fp= fopen("./examples/rand0", "r"); 
     Maze maze = Create_Maze(fp); 
     Pretty_Print_Maze(maze); 
+    Destroy_Maze(maze); 
     fclose(fp); 
 }

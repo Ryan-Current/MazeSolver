@@ -5,7 +5,14 @@
 // 
 // Author:  Ryan Current rjc7379
 //
-
+#define _DEFAULT_SOURCE
+#define MAX_LINE 15
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <assert.h>
 #include"MazeQueue.h"
 
 /// maze_node_s is a struct that represents the current Maze. 
@@ -23,14 +30,6 @@ typedef struct maze_s * Maze;
 #define _MAZE_IMPL_
 #include "MazeSolver.h"
 
-#define  _GNU_SOURCE
-#include <stdio.h>
-#include <stdbool.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-
 #define MAZE_INITIAL_ROWS 2
 
 
@@ -46,8 +45,11 @@ bool Node_Is_Solution(Maze maze, MazeNode node)
 /// Destroys the Maze and free's any memory that was allocated for the maze
 void Destroy_Maze(Maze maze)
 {
-    if(maze->maxC != -1)
-        printf("IMPLEMENT DESTROY MAZE FUNTION\n"); 
+    printf("1"); 
+    que_destroy(maze->queue); 
+    free(maze->maze); 
+    printf("1"); 
+    free(maze); 
 }
 
 
@@ -56,7 +58,7 @@ void Destroy_Maze(Maze maze)
 /// in 
 void Solve_Maze(Maze maze)
 {
-    if(maze->maxC != -1)
+    if(maze->maxC != 999)
         printf("IMPLEMENT SOLVE FUNCTION \n"); 
 
 }
@@ -93,17 +95,6 @@ void Pretty_Print_Maze(Maze maze)
 }
 
 
-/// checks if the node has already been enqueued or checked. 
-/// @param maze the maze that is being solved. 
-/// @param node the node to check
-bool maze_node_checked(Maze maze, MazeNode node)
-{
-    if(maze->maxC != -1)
-        if(node->currentC != -1)
-            printf("IMPLEMENT MAZE NODE CHECKED FUNCTION\n"); 
-    return false; 
-}
-
 
 /// gets the current neighbors and adds them to the MazeQueue within the maze
 /// that is passed in
@@ -111,9 +102,46 @@ bool maze_node_checked(Maze maze, MazeNode node)
 /// @param node the node to get the neighbors of
 void get_neighbors(Maze maze, MazeNode node)
 {
-    if(maze->maxC != -1)
-        if(node->currentC != -1)
-            printf("IMPLEMENT GET NEIGHBORS\n"); 
+    // north
+    if(node->currentR > 0)
+        if( (maze->maze[node->currentR - 1][node->currentC] == '.') && 
+            (!que_has_or_had(maze->queue, node->currentR, node->currentC)) )
+        {
+            MazeNode neighbor = que_create_node(node->currentR - 1, node->currentC, 
+                                                node->currentR, node->currentC); 
+            que_insert(maze->queue, neighbor); 
+        }
+
+    // south
+    if(node->currentR < maze->maxR - 1)
+        if((maze->maze[node->currentR + 1][node->currentC] == '.') &&
+           (!que_has_or_had(maze->queue, node->currentR, node->currentC)) )
+        {
+            MazeNode neighbor = que_create_node(node->currentR + 1, node->currentC, 
+                                                node->currentR, node->currentC); 
+            que_insert(maze->queue, neighbor); 
+        }
+
+    // west
+    if(node->currentC > 0)
+        if((maze->maze[node->currentR][node->currentC - 1] == '.') &&
+           (!que_has_or_had(maze->queue, node->currentR, node->currentC)) )
+        {
+            MazeNode neighbor = que_create_node(node->currentR, node->currentC - 1, 
+                                                node->currentR, node->currentC); 
+            que_insert(maze->queue, neighbor); 
+        }
+
+    // east
+    if(node->currentC < maze->maxC - 1)
+        if((maze->maze[node->currentR][node->currentC + 1] == '.') &&
+           (!que_has_or_had(maze->queue, node->currentR, node->currentC)) )
+        {
+            MazeNode neighbor = que_create_node(node->currentR, node->currentC + 1, 
+                                                node->currentR, node->currentC); 
+            que_insert(maze->queue, neighbor); 
+        }
+
 
 }
 
@@ -133,25 +161,26 @@ void realloc_Maze(Maze maze)
 /// @param file the file to load
 void load_maze(Maze maze, FILE * file)
 {
+    
     // Initialize values for parsing 
-    char * buffer = NULL;
-    size_t bufferSize = 0;
-    ssize_t line_size;
-
-    // get the size of each row 
-    line_size = getline(&buffer, &bufferSize, file);
-    if(line_size > 0)
+    char* buf = (char*) malloc( sizeof( char) * MAX_LINE);
+    size_t n=MAX_LINE;
+    ssize_t num;
+    
+    num = getline( &buf, &n, file); 
+    //get the total size of the line 
+    if(num > 0)
     {
-        for(ssize_t i = 0; i < line_size; i++)
+        for(ssize_t i = 0; i < num; i++)
         {
-            if(buffer[i] == '0' || buffer[i] == '1') maze->maxC++; 
+            if(buf[i] == '0' || buf[i] == '1') maze->maxC++; 
         }
     }
 
     // read in lines 
-    while(line_size > 0)
+    while(num > 0)
     {
-        if(sizeof(* maze->maze)/sizeof(char **) == maze->maxR)
+        if(n-1 == maze->maxR)
         {
             realloc_Maze(maze); 
         }
@@ -159,22 +188,24 @@ void load_maze(Maze maze, FILE * file)
         maze->maze[maze->maxR] = (char *)malloc(maze->maxC * sizeof(char *)); 
 
         int j = 0; 
-        for(ssize_t i = 0; i < line_size; i++)
+        for(ssize_t i = 0; i < num; i++)
         {
-            if(buffer[i] == '0')
+            if(buf[i] == '0')
             {
                 maze->maze[maze->maxR][j] = '.';
                 j++;  
             }
-            if(buffer[i] == '1')  
+            if(buf[i] == '1')  
             {
                 maze->maze[maze->maxR][j] = '#';
                 j++;  
             }
         }
         maze->maxR++; 
-        line_size = getline(&buffer, &bufferSize, file);  
+        num = getline(&buf, &n, file);  
     }
+
+    free(buf); 
     
 }
 
