@@ -22,6 +22,7 @@ struct maze_s
 {
     char ** maze; 
     MazeQueue queue; 
+    size_t r_allocation; 
     unsigned short maxC; 
     unsigned short maxR; 
 };
@@ -45,10 +46,14 @@ bool Node_Is_Solution(Maze maze, MazeNode node)
 /// Destroys the Maze and free's any memory that was allocated for the maze
 void Destroy_Maze(Maze maze)
 {
-    printf("1"); 
+    // if(maze->maxC != 99)
+    // {
+    //     printf("something not write"); 
+    // }
     que_destroy(maze->queue); 
+    for(int i = 0; i < maze->maxR; i++)
+        free(maze->maze[i]); 
     free(maze->maze); 
-    printf("1"); 
     free(maze); 
 }
 
@@ -150,7 +155,8 @@ void get_neighbors(Maze maze, MazeNode node)
 /// @param maze the maze to increase size 
 void realloc_Maze(Maze maze)
 {
-    char ** temp = (char **)realloc(maze->maze, 2 * sizeof(maze->maze)); 
+    char ** temp = (char **)realloc(maze->maze, 2 * maze->r_allocation * sizeof(char **)); 
+    maze->r_allocation = 2 * maze->r_allocation;
     maze->maze = temp; 
     assert(maze->maze && "Reallocation of memory failed"); 
 }
@@ -161,7 +167,6 @@ void realloc_Maze(Maze maze)
 /// @param file the file to load
 void load_maze(Maze maze, FILE * file)
 {
-    
     // Initialize values for parsing 
     char* buf = (char*) malloc( sizeof( char) * MAX_LINE);
     size_t n=MAX_LINE;
@@ -180,7 +185,7 @@ void load_maze(Maze maze, FILE * file)
     // read in lines 
     while(num > 0)
     {
-        if(n-1 == maze->maxR)
+        if(maze->r_allocation-1 == maze->maxR)
         {
             realloc_Maze(maze); 
         }
@@ -215,8 +220,11 @@ void load_maze(Maze maze, FILE * file)
 Maze Create_Maze(FILE * file)
 {
     Maze new = (Maze)malloc(sizeof(struct maze_s));
-    new->maze = (char **)malloc(MAZE_INITIAL_ROWS * sizeof(short*)); 
+    new->maze = (char **)malloc(MAZE_INITIAL_ROWS * sizeof(char *)); 
+    new->r_allocation = MAZE_INITIAL_ROWS; 
     new->queue = que_create(); 
+    new->maxR = 0; 
+    new->maxC = 0; 
     load_maze(new, file); 
     return new;  
 }
