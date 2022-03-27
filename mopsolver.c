@@ -16,9 +16,11 @@
 
 int main()
 {
-    FILE * fp= fopen("./examples/rand0", "r"); 
+    FILE * fp= fopen("./examples/full8x8", "r"); 
     Maze maze = Create_Maze(fp); 
-    Pretty_Print_Maze(maze); 
+    Pretty_Print_Maze(maze, stdout); 
+    Solve_Maze(maze, stdout); 
+    Pretty_Print_Maze(maze, stdout); 
     Destroy_Maze(maze); 
     fclose(fp); 
 }

@@ -46,12 +46,14 @@ void Destroy_Maze(Maze maze);
 /// Solves the maze and stores the solution in the Maze object that gets passed
 /// in 
 /// @param maze maze to solve 
-void Solve_Maze(Maze maze); 
+/// @param file file to print to 
+void Solve_Maze(Maze maze, FILE * file); 
 
 
 /// Prints the maze to stdout with a border and easier to see characters. 
 /// @param maze maze to pretty print
-void Pretty_Print_Maze(Maze maze); 
+/// @param file file to print to 
+void Pretty_Print_Maze(Maze maze, FILE * file); 
 
 
 

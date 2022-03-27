@@ -18,10 +18,10 @@
 /// previousR represents the previous row 
 typedef struct maze_node_s
 {
-    unsigned short currentC; 
     unsigned short currentR; 
-    unsigned short previousC; 
-    unsigned short previousR; 
+    unsigned short currentC; 
+    short previousR; 
+    short previousC; 
 } * MazeNode; 
 
 
@@ -50,12 +50,12 @@ MazeQueue que_create();
 
 
 /// creates a new MazeNode and returns a pointer to it
-/// @param currentC current column 
 /// @param currentR current row
-/// @param previousC previous column
+/// @param currentC current column 
 /// @param previousR previous row
+/// @param previousC previous column
 /// @return MazeNode pointer of the current node
-MazeNode que_create_node(short currentR, short currentC, short previousR, short previousC); 
+MazeNode que_create_node(unsigned short currentR, unsigned short currentC, short previousR, short previousC); 
 
 
 /// Tear down and deallocate the supplied QueuADT.
@@ -75,15 +75,24 @@ void que_insert( MazeQueue queue, MazeNode data );
 ///
 /// @param queue the MazeQueue to be manipulated
 /// @return the value that was removed from the queue
-/// @exception If the queue is empty, the program will terminate
-///     with an error message.
+/// @exception If the queue is empty, the program will terminate 
+///            with an error message.
 MazeNode que_next( MazeQueue queue );
+
+
+/// Finds and returns a Node that once existed in the queue
+/// @param queue the queue to check 
+/// @param currentR the row of the node to check
+/// @param currentC the column of the node to check
+/// @return MazeNode when found, null when not 
+MazeNode que_find( MazeQueue queue, short currentR, short currentC);
 
 
 /// Indicates if the queue has ever had or currently has a MazeNode
 /// @param queue the queue to check 
 /// @param currentR the row of the node to check
 /// @param currentC the column of the node to check
+/// @return true if the MazeNode existed in the queue before
 bool que_has_or_had( MazeQueue queue, short currentR, short currentC ); 
 
 

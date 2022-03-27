@@ -21,8 +21,8 @@ struct maze_node_s
 {
     unsigned short currentR; 
     unsigned short currentC; 
-    unsigned short previousR; 
-    unsigned short previousC; 
+    short previousR; 
+    short previousC; 
 }; 
 
 typedef struct maze_node_s * MazeNode; 
@@ -32,8 +32,8 @@ typedef struct maze_node_s * MazeNode;
 struct queue_s 
 {
     MazeNode * currentQueue; 
-    int currentIndex; 
-    int currentLength; 
+    int currentStart; 
+    int currentEnd; 
     int maxSize; 
 }; 
 
@@ -49,16 +49,16 @@ MazeQueue que_create()
     assert(new && "Allocation of new MazeQueue memory failed"); 
     new->currentQueue = (MazeNode *)malloc(sizeof(MazeNode)*INITIAL_SIZE);
     assert(new->currentQueue && "Allocation of MazeQueue list memory failed"); 
-    new->currentIndex = 0;  
-    new->currentLength = 0; 
+    new->currentStart = 0;  
+    new->currentEnd = 0; 
     new->maxSize = INITIAL_SIZE; 
     return new; 
 }
 
 /// creates a new MazeNode and returns a pointer to it
-MazeNode que_create_node(short currentR, short currentC, short previousR, short previousC)
+MazeNode que_create_node(unsigned short currentR, unsigned short currentC, short previousR, short previousC)
 {
-    MazeNode new = (MazeNode)malloc(sizeof(MazeNode)); 
+    MazeNode new = (MazeNode)malloc(sizeof(struct maze_node_s)); 
     new->currentR = currentR; 
     new->currentC = currentC; 
     new->previousR = previousR; 
@@ -70,7 +70,7 @@ MazeNode que_create_node(short currentR, short currentC, short previousR, short 
 /// Tear down and deallocate the supplied MazeQueue.
 void que_destroy( MazeQueue queue )
 {
-    for(int i = 0; i < queue->currentIndex + queue->currentLength; i++)
+    for(int i = 0; i < queue->currentEnd; i++)
     {
         free(queue->currentQueue[i]); 
     }
@@ -82,14 +82,14 @@ void que_destroy( MazeQueue queue )
 /// Insert the specified data into the Queue in the appropriate place
 void que_insert( MazeQueue queue, MazeNode data )
 {
-    if(queue->currentIndex != queue->maxSize)
+    if(queue->currentEnd != queue->maxSize)
     {
-        queue->currentQueue[queue->currentIndex + queue->currentLength] = data;
-        queue->currentLength++; 
+        queue->currentQueue[queue->currentEnd] = data;
+        queue->currentEnd++; 
     }
     else
     {
-        MazeNode * temp = (MazeNode *)realloc(queue->currentQueue, (sizeof(queue->currentQueue)*2)); 
+        MazeNode * temp = (MazeNode *)realloc(queue->currentQueue, 2 * queue->maxSize * sizeof(MazeNode)); 
         queue->currentQueue = temp; 
         assert(queue->currentQueue && "Reallocation of memory failed"); 
         queue->maxSize = queue->maxSize * 2; 
@@ -101,15 +101,30 @@ void que_insert( MazeQueue queue, MazeNode data )
 /// Return the first element from the queue.
 MazeNode que_next( MazeQueue queue )
 {
-    assert(queue->currentLength != 0 && "Cannot remove from an empty queue"); 
-    return queue->currentQueue[queue->currentIndex++]; 
+    assert(!que_empty(queue) && "Cannot remove from an empty queue"); 
+    MazeNode nextNode = queue->currentQueue[queue->currentStart];
+    queue->currentStart++; 
+    return nextNode; 
 }   
+
+/// Finds and returns a Node that once existed in the queue
+MazeNode que_find( MazeQueue queue, short currentR, short currentC)
+{
+
+    for(int i = queue->currentEnd - 1; i > 0; i--)
+    {
+        if(queue->currentQueue[i]->currentC == currentC &&
+           queue->currentQueue[i]->currentR == currentR)
+                return queue->currentQueue[i]; 
+    }
+    return NULL; 
+}
 
 
 /// Indicates if the queue has ever had or currently has a MazeNode 
 bool que_has_or_had( MazeQueue queue, short currentR, short currentC )
 {
-    for(int i = 0; i < queue->currentIndex + queue->currentLength; i++)
+    for(int i = queue->currentEnd - 1; i >= 0; i--)
     {
         if(queue->currentQueue[i]->currentC == currentC &&
            queue->currentQueue[i]->currentR == currentR)
@@ -122,6 +137,6 @@ bool que_has_or_had( MazeQueue queue, short currentR, short currentC )
 /// Indicate whether or not the supplied Queue is empty
 bool que_empty( MazeQueue queue )
 {
-    return (queue->currentLength == 0);  
+    return (queue->currentEnd == queue->currentStart);  
 }
 

@@ -34,22 +34,9 @@ typedef struct maze_s * Maze;
 #define MAZE_INITIAL_ROWS 2
 
 
-/// determines wheather the current node is at the solution
-/// @param maze the maze that the node exists in
-/// @param node the node to check 
-bool Node_Is_Solution(Maze maze, MazeNode node)
-{
-    return ((maze->maxC == node->currentC) && (maze->maxR == node->currentR)); 
-}
-
-
 /// Destroys the Maze and free's any memory that was allocated for the maze
 void Destroy_Maze(Maze maze)
 {
-    // if(maze->maxC != 99)
-    // {
-    //     printf("something not write"); 
-    // }
     que_destroy(maze->queue); 
     for(int i = 0; i < maze->maxR; i++)
         free(maze->maze[i]); 
@@ -58,59 +45,16 @@ void Destroy_Maze(Maze maze)
 }
 
 
-
-/// Solves the maze and stores the solution in the Maze object that gets passed
-/// in 
-void Solve_Maze(Maze maze)
-{
-    if(maze->maxC != 999)
-        printf("IMPLEMENT SOLVE FUNCTION \n"); 
-
-}
-
-
-/// Prints the maze to stdout with a border and easier to see characters. 
-void Pretty_Print_Maze(Maze maze)
-{
-    // top border
-    printf("|-"); 
-    for(int i = 0; i < maze->maxC; i++)
-        printf("--"); 
-    printf("|\n"); 
-
-    // actual maze with left and right border
-    for(int i = 0; i < maze->maxR; i++)
-    {
-        if(i != 0) printf("| "); 
-        else printf("  "); 
-        for(int j = 0; j < maze->maxC; j++)
-        {
-            printf("%c ", maze->maze[i][j]); 
-        }
-        if(i != maze->maxR-1) printf("|\n"); 
-        else printf(" \n"); 
-    }
-
-    //bottom border
-    printf("|-"); 
-    for(int i = 0; i < maze->maxC; i++)
-        printf("--"); 
-    printf("|\n"); 
-
-}
-
-
-
 /// gets the current neighbors and adds them to the MazeQueue within the maze
 /// that is passed in
 /// @param maze the maze that is being solved. 
 /// @param node the node to get the neighbors of
-void get_neighbors(Maze maze, MazeNode node)
+void add_neighbors(Maze maze, MazeNode node)
 {
     // north
     if(node->currentR > 0)
         if( (maze->maze[node->currentR - 1][node->currentC] == '.') && 
-            (!que_has_or_had(maze->queue, node->currentR, node->currentC)) )
+            (!que_has_or_had(maze->queue, node->currentR - 1, node->currentC)) )
         {
             MazeNode neighbor = que_create_node(node->currentR - 1, node->currentC, 
                                                 node->currentR, node->currentC); 
@@ -120,7 +64,7 @@ void get_neighbors(Maze maze, MazeNode node)
     // south
     if(node->currentR < maze->maxR - 1)
         if((maze->maze[node->currentR + 1][node->currentC] == '.') &&
-           (!que_has_or_had(maze->queue, node->currentR, node->currentC)) )
+           (!que_has_or_had(maze->queue, node->currentR + 1, node->currentC)) )
         {
             MazeNode neighbor = que_create_node(node->currentR + 1, node->currentC, 
                                                 node->currentR, node->currentC); 
@@ -130,7 +74,7 @@ void get_neighbors(Maze maze, MazeNode node)
     // west
     if(node->currentC > 0)
         if((maze->maze[node->currentR][node->currentC - 1] == '.') &&
-           (!que_has_or_had(maze->queue, node->currentR, node->currentC)) )
+           (!que_has_or_had(maze->queue, node->currentR, node->currentC - 1)) )
         {
             MazeNode neighbor = que_create_node(node->currentR, node->currentC - 1, 
                                                 node->currentR, node->currentC); 
@@ -140,13 +84,101 @@ void get_neighbors(Maze maze, MazeNode node)
     // east
     if(node->currentC < maze->maxC - 1)
         if((maze->maze[node->currentR][node->currentC + 1] == '.') &&
-           (!que_has_or_had(maze->queue, node->currentR, node->currentC)) )
+           (!que_has_or_had(maze->queue, node->currentR, node->currentC + 1)) )
         {
             MazeNode neighbor = que_create_node(node->currentR, node->currentC + 1, 
                                                 node->currentR, node->currentC); 
             que_insert(maze->queue, neighbor); 
         }
 
+
+}
+
+
+/// Solves the maze and stores the solution in the Maze object that gets passed
+/// in 
+void Solve_Maze(Maze maze, FILE * file)
+{
+    // initialize neighbors list
+    if(maze->maxC > 0 && maze->maxR > 0)
+    {
+        MazeNode neighbor = que_create_node(0, 0, -1, -1); 
+            que_insert(maze->queue, neighbor); 
+    }
+    else
+    {
+        fprintf(file, "Maze is empty"); 
+        return;
+    }
+
+    // bfs
+    bool solved = false; 
+    MazeNode cNode; 
+    while(!que_empty(maze->queue))
+    {
+        cNode = que_next(maze->queue);
+        if(cNode->currentR == maze->maxR - 1 && cNode->currentC == maze->maxC - 1)
+        {
+            solved = true; 
+            break; 
+        }
+        add_neighbors(maze, cNode); 
+    }
+
+    if(solved)
+    {
+        // change path to + and count moves
+        int moves = 0; 
+        while(cNode->currentR != 0 || cNode->currentC != 0)
+        {
+            moves++; 
+            maze->maze[cNode->currentR][cNode->currentC] = '+'; 
+            cNode = que_find(maze->queue, cNode->previousR, cNode->previousC);
+            if(cNode == NULL) 
+            {
+                maze->maze[0][0] = '+'; 
+                break; 
+            }
+        }
+
+        fprintf(file, "Solution in %d steps\n", moves); 
+    }
+    else
+    {
+        fprintf(file, "No solution.\n"); 
+    }
+
+    
+}
+
+
+/// Prints the maze to stdout with a border and easier to see characters. 
+void Pretty_Print_Maze(Maze maze, FILE * file)
+{
+    // top border
+    fprintf(file, "|-"); 
+    for(int i = 0; i < maze->maxC; i++)
+        fprintf(file, "--"); 
+    fprintf(file, "|\n"); 
+
+    // actual maze with left and right border
+    for(int i = 0; i < maze->maxR; i++)
+    {
+        if(i != 0) fprintf(file, "| "); 
+        else fprintf(file, "  "); 
+        for(int j = 0; j < maze->maxC; j++)
+        {
+            fprintf(file, "%c ", maze->maze[i][j]); 
+        }
+        if(i != maze->maxR-1) fprintf(file, "|\n"); 
+        else fprintf(file, " \n"); 
+    }
+
+    //bottom border
+    fprintf(file, "|-"); 
+    for(int i = 0; i < maze->maxC; i++)
+        fprintf(file, "--"); 
+    fprintf(file, "|\n"); 
 
 }
 
