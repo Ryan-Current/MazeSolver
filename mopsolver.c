@@ -20,7 +20,7 @@
 void printUsage()
 {
     printf("Usage:\n"
-            "mopsolver [-hdsp] [-i INFILE] [-o OUTFILE]"
+            "mopsolver [-hdsp] [-i INFILE] [-o OUTFILE]\n"
             "Options:\n"
             "   -h          Print usage and options list to stdout only.    (Default: off)\n"
             "   -d          Pretty-print (display) the maze after reading.  (Default: off)\n"
@@ -84,7 +84,7 @@ int main( int argc, char * argv[] )
     {
         int steps = Solve_Maze(maze); 
         if(steps == -1)
-            fprintf(outFile, "No Solution."); 
+            fprintf(outFile, "No solution."); 
         else    
             fprintf(outFile, "Solution in %d steps.\n", steps); 
     }

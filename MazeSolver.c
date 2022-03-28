@@ -100,7 +100,7 @@ void add_neighbors(Maze maze, MazeNode node)
 int Solve_Maze(Maze maze)
 {
     // initialize neighbors list
-    if(maze->maxC > 0 || maze->maxR > 0)
+    if((maze->maxC > 0 || maze->maxR > 0) && maze->maze[0][0] == '.')
     {
         MazeNode neighbor = que_create_node(0, 0, -1, -1); 
             que_insert(maze->queue, neighbor); 
@@ -127,7 +127,7 @@ int Solve_Maze(Maze maze)
     if(solved)
     {
         // change path to + and count moves
-        int moves = 0; 
+        int moves = 1; 
         while(cNode->currentR != 0 || cNode->currentC != 0)
         {
             moves++; 

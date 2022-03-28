@@ -1,0 +1,47 @@
+commit f89036e25951a456f9cee3fbe513b5596c4f3135
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Sun Mar 27 20:31:24 2022 -0400
+
+    New: main method command line arguments processed finished, project complete
+
+commit e45e39f5f2f9dfe5e82673b5f3f5cfa7a32fff16
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Sun Mar 27 11:30:26 2022 -0400
+
+    New: MazeSolver finished
+
+commit 5854db75d69532e9dbbdd00bed4b9cf84b497549
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Sun Mar 27 09:35:53 2022 -0400
+
+    Fix: fixed uninitialized value error
+
+commit 9dcbd25d88df91dc9d415ba43a86c075367f1ef5
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Sun Mar 27 08:49:46 2022 -0400
+
+    New: getNeighbors method added
+
+commit c76d166b3dc918f59cd2248517d79e91bd9b9336
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Sat Mar 26 19:30:04 2022 -0400
+
+    New: QueueADT modified to become MazeQueue
+
+commit 61c1f321cc8a14d36de223f62e29960896ee0ed3
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Sat Mar 26 18:43:26 2022 -0400
+
+    New: File loading and pretty printing implemented
+
+commit 6e34e0be605bc91249244d23ba00fa389c53ce16
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Sat Mar 26 18:14:07 2022 -0400
+
+    New: MazeSolver functions defined, Create_Maze implemented
+
+commit e9fa7924270bf92458ab51ee3972fe6c2ce9d1af
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Fri Mar 25 21:27:15 2022 -0400
+
+    New: initial commit
