@@ -97,18 +97,17 @@ void add_neighbors(Maze maze, MazeNode node)
 
 /// Solves the maze and stores the solution in the Maze object that gets passed
 /// in 
-void Solve_Maze(Maze maze, FILE * file)
+int Solve_Maze(Maze maze)
 {
     // initialize neighbors list
-    if(maze->maxC > 0 && maze->maxR > 0)
+    if(maze->maxC > 0 || maze->maxR > 0)
     {
         MazeNode neighbor = que_create_node(0, 0, -1, -1); 
             que_insert(maze->queue, neighbor); 
     }
     else
     {
-        fprintf(file, "Maze is empty"); 
-        return;
+        return -1;
     }
 
     // bfs
@@ -141,11 +140,11 @@ void Solve_Maze(Maze maze, FILE * file)
             }
         }
 
-        fprintf(file, "Solution in %d steps\n", moves); 
+        return moves; 
     }
     else
     {
-        fprintf(file, "No solution.\n"); 
+        return -1; 
     }
 
     
