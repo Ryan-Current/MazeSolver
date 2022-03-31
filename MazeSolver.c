@@ -109,7 +109,6 @@ int Solve_Maze(Maze maze)
     {
         return -1;
     }
-
     // bfs
     bool solved = false; 
     MazeNode cNode; 
@@ -124,6 +123,7 @@ int Solve_Maze(Maze maze)
         add_neighbors(maze, cNode); 
     }
 
+    printf("bfs finished counting steps\n"); 
     if(solved)
     {
         // change path to + and count moves
@@ -146,8 +146,6 @@ int Solve_Maze(Maze maze)
     {
         return -1; 
     }
-
-    
 }
 
 
@@ -242,7 +240,6 @@ void load_maze(Maze maze, FILE * file)
     }
 
     free(buf); 
-    
 }
 
 

@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <stdbool.h>
 
 
 void printUsage()
@@ -75,8 +76,6 @@ int main( int argc, char * argv[] )
                 break; 
         }
     }        
-
-
     Maze maze = Create_Maze(inFile);
     if(printInitial) 
         Pretty_Print_Maze(maze, outFile);
@@ -84,7 +83,7 @@ int main( int argc, char * argv[] )
     {
         int steps = Solve_Maze(maze); 
         if(steps == -1)
-            fprintf(outFile, "No solution."); 
+            fprintf(outFile, "No solution.\n"); 
         else    
             fprintf(outFile, "Solution in %d steps.\n", steps); 
     }

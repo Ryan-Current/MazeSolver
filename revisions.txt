@@ -1,3 +1,9 @@
+commit 0ca91b005d40be1ed42607e8af1bd74fab675c8f
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Mon Mar 28 16:43:22 2022 -0400
+
+    Fix: maze not checking (0,0) bug fixed
+
 commit f89036e25951a456f9cee3fbe513b5596c4f3135
 Author: Ryan Current <rjc7379@cs.rit.edu>
 Date:   Sun Mar 27 20:31:24 2022 -0400

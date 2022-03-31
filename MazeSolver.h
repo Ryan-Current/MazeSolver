@@ -7,21 +7,12 @@
 
 #ifndef _MAZESOLVER_H_
 #define _MAZESOLVER_H_
-#include <stdio.h>  
-#include "MazeQueue.h"
-
+#include <stdio.h>
 #ifndef _MAZE_IMPL_
-#define _MAZE_IMPL_
 
 /// Maze is a struct that contains information about the maze that is currently 
 /// being solved. 
-typedef struct 
-{ 
-    char ** maze; 
-    MazeQueue queue; 
-    unsigned int maxC; 
-    unsigned int maxR;
-} * Maze; 
+typedef struct maze_s * Maze; 
 
 #endif
 
@@ -40,7 +31,6 @@ Maze Create_Maze(FILE * file);
 /// Destroys the Maze and free's any memory that was allocated for the maze
 /// @param maze the maze to destory
 void Destroy_Maze(Maze maze); 
-
 
 
 /// Solves the maze and stores the solution in the Maze object that gets passed
