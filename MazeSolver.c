@@ -123,7 +123,7 @@ int Solve_Maze(Maze maze)
         add_neighbors(maze, cNode); 
     }
 
-    printf("bfs finished counting steps\n"); 
+     
     if(solved)
     {
         // change path to + and count moves

@@ -1,3 +1,9 @@
+commit 93e6155207909b34ed46b56b46001c84f900d216
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Thu Mar 31 20:01:30 2022 -0400
+
+    removed unnecessary print statements
+
 commit 6936f42b1e138159b49e1cb664f0cd511b17c7ff
 Author: Ryan Current <rjc7379@cs.rit.edu>
 Date:   Thu Mar 31 19:59:14 2022 -0400
