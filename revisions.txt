@@ -1,3 +1,9 @@
+commit 6936f42b1e138159b49e1cb664f0cd511b17c7ff
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Thu Mar 31 19:59:14 2022 -0400
+
+    code and documentation cleanup
+
 commit 0ca91b005d40be1ed42607e8af1bd74fab675c8f
 Author: Ryan Current <rjc7379@cs.rit.edu>
 Date:   Mon Mar 28 16:43:22 2022 -0400

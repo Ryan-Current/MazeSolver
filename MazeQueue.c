@@ -89,13 +89,13 @@ void que_insert( MazeQueue queue, MazeNode data )
     }
     else
     {
-        printf("reallocing memory\n"); 
+         
         MazeNode * temp = (MazeNode *)realloc(queue->currentQueue, 2 * queue->maxSize * sizeof(MazeNode)); 
         queue->currentQueue = temp; 
         assert(queue->currentQueue && "Reallocation of memory failed"); 
         queue->maxSize = queue->maxSize * 2; 
         que_insert(queue, data); 
-        printf("reallocation finished, size: %d\n", queue->maxSize); 
+         
     }
 } 
 
