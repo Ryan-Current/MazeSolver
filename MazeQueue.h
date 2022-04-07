@@ -12,30 +12,11 @@
 #ifndef _QUEUE_IMPL_
 
 /// maze_node_s is a struct that represents a node on the graph.
-/// currentC represents the current column 
-/// currentR represents the current row
-/// previousC represents the previous column 
-/// previousR represents the previous row 
-typedef struct maze_node_s
-{
-    unsigned short currentR; 
-    unsigned short currentC; 
-    short previousR; 
-    short previousC; 
-} * MazeNode; 
+typedef struct maze_node_s * MazeNode; 
 
 
-/// maze_node_s is a struct that represents a node on the graph. 
-/// currentC represents the current nodes x coodinate
-/// currentR represents the current nodes y coodinate
-/// prviousC represents the previous nodes x coodinate
-/// prviousR represents the previous nodes y coodinate
-typedef struct 
-{
-    MazeNode* currentQueue; 
-    int currentSize; 
-    int maxSize; 
-} * MazeQueue;
+/// maze_node_s is a struct that represents a queue of MazeNodes. 
+typedef struct maze_queue_s * MazeQueue;
 
 
 
@@ -93,7 +74,7 @@ MazeNode que_find( MazeQueue queue, short currentR, short currentC);
 /// @param currentR the row of the node to check
 /// @param currentC the column of the node to check
 /// @return true if the MazeNode existed in the queue before
-bool que_has_or_had( MazeQueue queue, short currentR, short currentC ); 
+bool que_visited( MazeQueue queue, short currentR, short currentC ); 
 
 
 /// Indicate whether or not the supplied Queue is empty
@@ -101,6 +82,30 @@ bool que_has_or_had( MazeQueue queue, short currentR, short currentC );
 /// @param the MazeQueue to be tested
 /// @return true if the queue is empty, otherwise false
 bool que_empty( MazeQueue queue );
+
+
+/// gets the currentR from node
+/// @param node the node to get data from
+/// @return node->currentR
+unsigned short node_get_currentR(MazeNode node);
+
+
+/// gets the currentC from node
+/// @param node the node to get data from
+/// @return node->currentC
+unsigned short node_get_currentC(MazeNode node); 
+
+
+/// gets the previousR from node
+/// @param node the node to get data from
+/// @return node->previousR
+short node_get_previousR(MazeNode node); 
+
+
+/// gets the previousC from node
+/// @param node the node to get data from
+/// @return node->previousC
+short node_get_previousC(MazeNode node);
 
 
 #endif

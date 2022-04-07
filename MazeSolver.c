@@ -37,11 +37,14 @@ typedef struct maze_s * Maze;
 /// Destroys the Maze and free's any memory that was allocated for the maze
 void Destroy_Maze(Maze maze)
 {
-    que_destroy(maze->queue); 
-    for(int i = 0; i < maze->maxR; i++)
-        free(maze->maze[i]); 
-    free(maze->maze); 
-    free(maze); 
+    if(maze)
+    {
+        que_destroy(maze->queue); 
+        for(int i = 0; i < maze->maxR; i++)
+            free(maze->maze[i]); 
+        free(maze->maze); 
+        free(maze); 
+    }
 }
 
 
@@ -52,45 +55,49 @@ void Destroy_Maze(Maze maze)
 void add_neighbors(Maze maze, MazeNode node)
 {
     // north
-    if(node->currentR > 0)
-        if( (maze->maze[node->currentR - 1][node->currentC] == '.') && 
-            (!que_has_or_had(maze->queue, node->currentR - 1, node->currentC)) )
+    if(node_get_currentR(node) > 0)
+    {
+        if( (maze->maze[node_get_currentR(node) - 1][node_get_currentC(node)] == '.') && 
+            (!que_visited(maze->queue, node_get_currentR(node) - 1, node_get_currentC(node))) )
         {
-            MazeNode neighbor = que_create_node(node->currentR - 1, node->currentC, 
-                                                node->currentR, node->currentC); 
+            MazeNode neighbor = que_create_node(node_get_currentR(node) - 1, node_get_currentC(node), 
+                                                node_get_currentR(node), node_get_currentC(node)); 
             que_insert(maze->queue, neighbor); 
         }
-
+    }
     // south
-    if(node->currentR < maze->maxR - 1)
-        if((maze->maze[node->currentR + 1][node->currentC] == '.') &&
-           (!que_has_or_had(maze->queue, node->currentR + 1, node->currentC)) )
+    if(node_get_currentR(node) < maze->maxR - 1)
+    {
+        if((maze->maze[node_get_currentR(node) + 1][node_get_currentC(node)] == '.') &&
+           (!que_visited(maze->queue, node_get_currentR(node) + 1, node_get_currentC(node))) )
         {
-            MazeNode neighbor = que_create_node(node->currentR + 1, node->currentC, 
-                                                node->currentR, node->currentC); 
+            MazeNode neighbor = que_create_node(node_get_currentR(node) + 1, node_get_currentC(node), 
+                                                node_get_currentR(node), node_get_currentC(node)); 
             que_insert(maze->queue, neighbor); 
         }
-
+    }
     // west
-    if(node->currentC > 0)
-        if((maze->maze[node->currentR][node->currentC - 1] == '.') &&
-           (!que_has_or_had(maze->queue, node->currentR, node->currentC - 1)) )
+    if(node_get_currentC(node) > 0)
+    {
+        if((maze->maze[node_get_currentR(node)][node_get_currentC(node) - 1] == '.') &&
+           (!que_visited(maze->queue, node_get_currentR(node), node_get_currentC(node) - 1)) )
         {
-            MazeNode neighbor = que_create_node(node->currentR, node->currentC - 1, 
-                                                node->currentR, node->currentC); 
+            MazeNode neighbor = que_create_node(node_get_currentR(node), node_get_currentC(node) - 1, 
+                                                node_get_currentR(node), node_get_currentC(node)); 
             que_insert(maze->queue, neighbor); 
         }
-
+    }
     // east
-    if(node->currentC < maze->maxC - 1)
-        if((maze->maze[node->currentR][node->currentC + 1] == '.') &&
-           (!que_has_or_had(maze->queue, node->currentR, node->currentC + 1)) )
+    if(node_get_currentC(node) < maze->maxC - 1)
+    {
+        if((maze->maze[node_get_currentR(node)][node_get_currentC(node) + 1] == '.') &&
+           (!que_visited(maze->queue, node_get_currentR(node), node_get_currentC(node) + 1)) )
         {
-            MazeNode neighbor = que_create_node(node->currentR, node->currentC + 1, 
-                                                node->currentR, node->currentC); 
+            MazeNode neighbor = que_create_node(node_get_currentR(node), node_get_currentC(node) + 1, 
+                                                node_get_currentR(node), node_get_currentC(node)); 
             que_insert(maze->queue, neighbor); 
         }
-
+    }
 
 }
 
@@ -115,7 +122,7 @@ int Solve_Maze(Maze maze)
     while(!que_empty(maze->queue))
     {
         cNode = que_next(maze->queue);
-        if(cNode->currentR == maze->maxR - 1 && cNode->currentC == maze->maxC - 1)
+        if(node_get_currentR(cNode) == maze->maxR - 1 && node_get_currentC(cNode) == maze->maxC - 1)
         {
             solved = true; 
             break; 
@@ -128,11 +135,11 @@ int Solve_Maze(Maze maze)
     {
         // change path to + and count moves
         int moves = 1; 
-        while(cNode->currentR != 0 || cNode->currentC != 0)
+        while(node_get_currentR(cNode) != 0 || node_get_currentC(cNode) != 0)
         {
             moves++; 
-            maze->maze[cNode->currentR][cNode->currentC] = '+'; 
-            cNode = que_find(maze->queue, cNode->previousR, cNode->previousC);
+            maze->maze[node_get_currentR(cNode)][node_get_currentC(cNode)] = '+'; 
+            cNode = que_find(maze->queue, node_get_previousR(cNode), node_get_previousC(cNode));
             if(cNode == NULL) 
             {
                 maze->maze[0][0] = '+'; 
@@ -238,7 +245,6 @@ void load_maze(Maze maze, FILE * file)
         maze->maxR++; 
         num = getline(&buf, &n, file);  
     }
-
     free(buf); 
 }
 
@@ -250,10 +256,10 @@ Maze Create_Maze(FILE * file)
     Maze new = (Maze)malloc(sizeof(struct maze_s));
     new->maze = (char **)malloc(MAZE_INITIAL_ROWS * sizeof(char *)); 
     new->r_allocation = MAZE_INITIAL_ROWS; 
-    new->queue = que_create(); 
     new->maxR = 0; 
     new->maxC = 0; 
     load_maze(new, file); 
+    new->queue = que_create(new->maxR, new->maxC); 
     return new;  
 }
 

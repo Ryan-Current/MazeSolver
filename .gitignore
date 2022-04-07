@@ -1,6 +1,6 @@
 examples.tar.gz
 examples/
 MazeSolver.o
-QueueADT.o
 mopsolver.o
 mopsolver
+*.o

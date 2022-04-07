@@ -14,9 +14,14 @@
 #include <assert.h>
 #include <stdio.h>
 #define INITIAL_SIZE 2
+#define VISITED 'v'
 
 
-/// maze_node_s is a struct that represents a node on the graph. 
+/// maze_node_s is a struct that represents a node on the graph.
+/// currentC represents the current column 
+/// currentR represents the current row
+/// previousC represents the previous column 
+/// previousR represents the previous row  
 struct maze_node_s
 {
     unsigned short currentR; 
@@ -28,27 +33,38 @@ struct maze_node_s
 typedef struct maze_node_s * MazeNode; 
 
 
-/// queue_s is a struct that represents a queue of MazeNodes
-struct queue_s 
+/// queue_s is a struct that represents a queue of MazeNodes. 
+/// currentQueue represents the current queue of MazeNodes. 
+/// currentStart represents the current start index 
+/// currentEnd represents the current last index 
+/// maxSize represents the maximum number of nodes that can
+struct maze_queue_s 
 {
     MazeNode * currentQueue; 
+    char * visitedset;
+    int maxR; 
+    int maxC;  
     int currentStart; 
     int currentEnd; 
     int maxSize; 
 }; 
 
-typedef struct queue_s * MazeQueue;
+typedef struct maze_queue_s * MazeQueue;
 #define _QUEUE_IMPL_
 #include "MazeQueue.h"
 
 
 /// Create a MazeQueue that uses the supplied function as a comparison routine.
-MazeQueue que_create()
+MazeQueue que_create(int maxR, int maxC)
 {
-    MazeQueue new = (MazeQueue)malloc(sizeof(struct queue_s)); 
+    MazeQueue new = (MazeQueue)malloc(sizeof(struct maze_queue_s)); 
     assert(new && "Allocation of new MazeQueue memory failed"); 
     new->currentQueue = (MazeNode *)malloc(sizeof(MazeNode)*INITIAL_SIZE);
     assert(new->currentQueue && "Allocation of MazeQueue list memory failed"); 
+    new->maxR = maxR; 
+    new->maxC = maxC; 
+    new->visitedset = (char *)calloc((maxR * maxC), sizeof(char)); 
+    assert(new->currentQueue && "Allocation of visitedSet list memory failed"); 
     new->currentStart = 0;  
     new->currentEnd = 0; 
     new->maxSize = INITIAL_SIZE; 
@@ -79,23 +95,23 @@ void que_destroy( MazeQueue queue )
 }
 
 
-/// Insert the specified data into the Queue in the appropriate place
-void que_insert( MazeQueue queue, MazeNode data )
+
+/// Insert the specified node into the Queue in the appropriate place
+void que_insert( MazeQueue queue, MazeNode node )
 {
     if(queue->currentEnd != queue->maxSize)
     {
-        queue->currentQueue[queue->currentEnd] = data;
+        queue->currentQueue[queue->currentEnd] = node;
         queue->currentEnd++; 
+        queue->visitedset[(node->currentR*queue->maxC) + node->currentC] = VISITED; 
     }
     else
     {
-         
         MazeNode * temp = (MazeNode *)realloc(queue->currentQueue, 2 * queue->maxSize * sizeof(MazeNode)); 
         queue->currentQueue = temp; 
         assert(queue->currentQueue && "Reallocation of memory failed"); 
         queue->maxSize = queue->maxSize * 2; 
-        que_insert(queue, data); 
-         
+        que_insert(queue, node); 
     }
 } 
 
@@ -108,6 +124,7 @@ MazeNode que_next( MazeQueue queue )
     queue->currentStart++; 
     return nextNode; 
 }   
+
 
 /// Finds and returns a Node that once existed in the queue
 MazeNode que_find( MazeQueue queue, short currentR, short currentC)
@@ -124,15 +141,9 @@ MazeNode que_find( MazeQueue queue, short currentR, short currentC)
 
 
 /// Indicates if the queue has ever had or currently has a MazeNode 
-bool que_has_or_had( MazeQueue queue, short currentR, short currentC )
+bool que_visited( MazeQueue queue, short currentR, short currentC )
 {
-    for(int i = queue->currentEnd - 1; i >= 0; i--)
-    {
-        if(queue->currentQueue[i]->currentC == currentC &&
-           queue->currentQueue[i]->currentR == currentR)
-                return true; 
-    }
-    return false; 
+    return queue->visitedset[(currentR*queue->maxC) + currentC] == VISITED; 
 }
 
 
@@ -141,4 +152,35 @@ bool que_empty( MazeQueue queue )
 {
     return (queue->currentEnd == queue->currentStart);  
 }
+
+
+/// gets the currentR from node
+unsigned short node_get_currentR(MazeNode node)
+{
+    return node->currentR; 
+}
+
+
+/// gets the currentC from node
+unsigned short node_get_currentC(MazeNode node)
+{
+    return node->currentC; 
+}
+
+
+/// gets the previousR from node
+short node_get_previousR(MazeNode node)
+{
+    return node->previousR; 
+}
+
+
+/// gets the previousC from node
+short node_get_previousC(MazeNode node)
+{
+    return node->previousC; 
+}
+
+
+
 
