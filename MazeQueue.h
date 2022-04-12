@@ -11,14 +11,13 @@
 
 #ifndef _QUEUE_IMPL_
 
+
 /// maze_node_s is a struct that represents a node on the graph.
 typedef struct maze_node_s * MazeNode; 
 
 
 /// maze_node_s is a struct that represents a queue of MazeNodes. 
 typedef struct maze_queue_s * MazeQueue;
-
-
 
 
 #endif
@@ -67,14 +66,6 @@ MazeNode que_next( MazeQueue queue );
 /// @param currentC the column of the node to check
 /// @return MazeNode when found, null when not 
 MazeNode que_find( MazeQueue queue, short currentR, short currentC);
-
-
-/// Indicates if the queue has ever had or currently has a MazeNode
-/// @param queue the queue to check 
-/// @param currentR the row of the node to check
-/// @param currentC the column of the node to check
-/// @return true if the MazeNode existed in the queue before
-bool que_visited( MazeQueue queue, short currentR, short currentC ); 
 
 
 /// Indicate whether or not the supplied Queue is empty

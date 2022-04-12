@@ -1,3 +1,9 @@
+commit b83dc4c84fd59c2f4e2577be0d0ad9cf95dc4afd
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Thu Apr 7 18:00:56 2022 -0400
+
+    New: added visited set implementation
+
 commit 97bcfe059a23ae1edb121ac1423daab12ece0b25
 Author: Ryan Current <rjc7379@cs.rit.edu>
 Date:   Thu Mar 31 20:02:31 2022 -0400

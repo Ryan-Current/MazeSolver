@@ -14,7 +14,6 @@
 #include <assert.h>
 #include <stdio.h>
 #define INITIAL_SIZE 2
-#define VISITED 'v'
 
 
 /// maze_node_s is a struct that represents a node on the graph.
@@ -41,9 +40,6 @@ typedef struct maze_node_s * MazeNode;
 struct maze_queue_s 
 {
     MazeNode * currentQueue; 
-    char * visitedset;
-    int maxR; 
-    int maxC;  
     int currentStart; 
     int currentEnd; 
     int maxSize; 
@@ -55,16 +51,12 @@ typedef struct maze_queue_s * MazeQueue;
 
 
 /// Create a MazeQueue that uses the supplied function as a comparison routine.
-MazeQueue que_create(int maxR, int maxC)
+MazeQueue que_create()
 {
     MazeQueue new = (MazeQueue)malloc(sizeof(struct maze_queue_s)); 
     assert(new && "Allocation of new MazeQueue memory failed"); 
     new->currentQueue = (MazeNode *)malloc(sizeof(MazeNode)*INITIAL_SIZE);
     assert(new->currentQueue && "Allocation of MazeQueue list memory failed"); 
-    new->maxR = maxR; 
-    new->maxC = maxC; 
-    new->visitedset = (char *)calloc((maxR * maxC), sizeof(char)); 
-    assert(new->currentQueue && "Allocation of visitedSet list memory failed"); 
     new->currentStart = 0;  
     new->currentEnd = 0; 
     new->maxSize = INITIAL_SIZE; 
@@ -103,7 +95,6 @@ void que_insert( MazeQueue queue, MazeNode node )
     {
         queue->currentQueue[queue->currentEnd] = node;
         queue->currentEnd++; 
-        queue->visitedset[(node->currentR*queue->maxC) + node->currentC] = VISITED; 
     }
     else
     {
@@ -114,6 +105,13 @@ void que_insert( MazeQueue queue, MazeNode node )
         que_insert(queue, node); 
     }
 } 
+
+
+/// Indicate whether or not the supplied Queue is empty
+bool que_empty( MazeQueue queue )
+{
+    return (queue->currentEnd == queue->currentStart);  
+}
 
 
 /// Return the first element from the queue.
@@ -129,7 +127,6 @@ MazeNode que_next( MazeQueue queue )
 /// Finds and returns a Node that once existed in the queue
 MazeNode que_find( MazeQueue queue, short currentR, short currentC)
 {
-
     for(int i = queue->currentEnd - 1; i > 0; i--)
     {
         if(queue->currentQueue[i]->currentC == currentC &&
@@ -137,20 +134,6 @@ MazeNode que_find( MazeQueue queue, short currentR, short currentC)
                 return queue->currentQueue[i]; 
     }
     return NULL; 
-}
-
-
-/// Indicates if the queue has ever had or currently has a MazeNode 
-bool que_visited( MazeQueue queue, short currentR, short currentC )
-{
-    return queue->visitedset[(currentR*queue->maxC) + currentC] == VISITED; 
-}
-
-
-/// Indicate whether or not the supplied Queue is empty
-bool que_empty( MazeQueue queue )
-{
-    return (queue->currentEnd == queue->currentStart);  
 }
 
 

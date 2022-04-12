@@ -7,6 +7,9 @@
 //
 #define _DEFAULT_SOURCE
 #define MAX_LINE 15
+#define VISITED 'v'
+#define PATH '.'
+#define BOUNDARY '#'
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -57,45 +60,45 @@ void add_neighbors(Maze maze, MazeNode node)
     // north
     if(node_get_currentR(node) > 0)
     {
-        if( (maze->maze[node_get_currentR(node) - 1][node_get_currentC(node)] == '.') && 
-            (!que_visited(maze->queue, node_get_currentR(node) - 1, node_get_currentC(node))) )
+        if(maze->maze[node_get_currentR(node) - 1][node_get_currentC(node)] == PATH)
         {
             MazeNode neighbor = que_create_node(node_get_currentR(node) - 1, node_get_currentC(node), 
                                                 node_get_currentR(node), node_get_currentC(node)); 
             que_insert(maze->queue, neighbor); 
+            maze->maze[node_get_currentR(node) - 1][node_get_currentC(node)] = VISITED; 
         }
     }
     // south
     if(node_get_currentR(node) < maze->maxR - 1)
     {
-        if((maze->maze[node_get_currentR(node) + 1][node_get_currentC(node)] == '.') &&
-           (!que_visited(maze->queue, node_get_currentR(node) + 1, node_get_currentC(node))) )
+        if(maze->maze[node_get_currentR(node) + 1][node_get_currentC(node)] == PATH)
         {
             MazeNode neighbor = que_create_node(node_get_currentR(node) + 1, node_get_currentC(node), 
-                                                node_get_currentR(node), node_get_currentC(node)); 
+                                                node_get_currentR(node), node_get_currentC(node));
             que_insert(maze->queue, neighbor); 
+            maze->maze[node_get_currentR(node) + 1][node_get_currentC(node)] = VISITED;  
         }
     }
     // west
     if(node_get_currentC(node) > 0)
     {
-        if((maze->maze[node_get_currentR(node)][node_get_currentC(node) - 1] == '.') &&
-           (!que_visited(maze->queue, node_get_currentR(node), node_get_currentC(node) - 1)) )
+        if(maze->maze[node_get_currentR(node)][node_get_currentC(node) - 1] == PATH)
         {
             MazeNode neighbor = que_create_node(node_get_currentR(node), node_get_currentC(node) - 1, 
                                                 node_get_currentR(node), node_get_currentC(node)); 
             que_insert(maze->queue, neighbor); 
+            maze->maze[node_get_currentR(node)][node_get_currentC(node) - 1] = VISITED; 
         }
     }
     // east
     if(node_get_currentC(node) < maze->maxC - 1)
     {
-        if((maze->maze[node_get_currentR(node)][node_get_currentC(node) + 1] == '.') &&
-           (!que_visited(maze->queue, node_get_currentR(node), node_get_currentC(node) + 1)) )
+        if(maze->maze[node_get_currentR(node)][node_get_currentC(node) + 1] == PATH)
         {
             MazeNode neighbor = que_create_node(node_get_currentR(node), node_get_currentC(node) + 1, 
                                                 node_get_currentR(node), node_get_currentC(node)); 
             que_insert(maze->queue, neighbor); 
+            maze->maze[node_get_currentR(node)][node_get_currentC(node) + 1] = VISITED;                               
         }
     }
 
@@ -107,7 +110,7 @@ void add_neighbors(Maze maze, MazeNode node)
 int Solve_Maze(Maze maze)
 {
     // initialize neighbors list
-    if((maze->maxC > 0 || maze->maxR > 0) && maze->maze[0][0] == '.')
+    if((maze->maxC > 0 || maze->maxR > 0) && maze->maze[0][0] == PATH)
     {
         MazeNode neighbor = que_create_node(0, 0, -1, -1); 
             que_insert(maze->queue, neighbor); 
@@ -172,7 +175,10 @@ void Pretty_Print_Maze(Maze maze, FILE * file)
         else fprintf(file, "  "); 
         for(int j = 0; j < maze->maxC; j++)
         {
-            fprintf(file, "%c ", maze->maze[i][j]); 
+            if(maze->maze[i][j] == VISITED)
+                fprintf(file, "%c ", PATH); 
+            else
+                fprintf(file, "%c ", maze->maze[i][j]); 
         }
         if(i != maze->maxR-1) fprintf(file, "|\n"); 
         else fprintf(file, " \n"); 
@@ -233,12 +239,12 @@ void load_maze(Maze maze, FILE * file)
         {
             if(buf[i] == '0')
             {
-                maze->maze[maze->maxR][j] = '.';
+                maze->maze[maze->maxR][j] = PATH;
                 j++;  
             }
             if(buf[i] == '1')  
             {
-                maze->maze[maze->maxR][j] = '#';
+                maze->maze[maze->maxR][j] = BOUNDARY;
                 j++;  
             }
         }
