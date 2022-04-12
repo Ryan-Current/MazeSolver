@@ -1,3 +1,9 @@
+commit 80deb10185a3697958b15fe53d03c1e2cdcda3d5
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Tue Apr 12 14:01:42 2022 -0400
+
+    New: removed visited set, visited cells represented with 'v'
+
 commit b83dc4c84fd59c2f4e2577be0d0ad9cf95dc4afd
 Author: Ryan Current <rjc7379@cs.rit.edu>
 Date:   Thu Apr 7 18:00:56 2022 -0400

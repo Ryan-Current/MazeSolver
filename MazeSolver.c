@@ -145,10 +145,10 @@ int Solve_Maze(Maze maze)
             cNode = que_find(maze->queue, node_get_previousR(cNode), node_get_previousC(cNode));
             if(cNode == NULL) 
             {
-                maze->maze[0][0] = '+'; 
                 break; 
             }
         }
+        maze->maze[0][0] = '+'; 
 
         return moves; 
     }
