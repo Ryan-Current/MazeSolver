@@ -6,6 +6,8 @@
 // Author:  Ryan Current rjc7379
 //
 #define _DEFAULT_SOURCE
+
+
 #define MAX_LINE 15
 #define FROM_NORTH 'n'
 #define FROM_SOUTH 's'
@@ -14,13 +16,16 @@
 #define PATH '.'
 #define SOLUTION_PATH '+'
 #define BOUNDARY '#'
+#define MAZE_INITIAL_ROWS 2
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <unistd.h>
 #include <assert.h>
-#include "QueueADT.h"
+#include "LinkedQueue.h"
 
 /// maze_node_s is a struct that represents the current Maze. 
 /// maze is a 2D array of shorts that represents the current maze
@@ -28,7 +33,7 @@
 struct maze_s
 {
     char ** maze; 
-    QueueADT queue; 
+    LinkedQueue queue; 
     size_t r_allocation; 
     unsigned short maxC; 
     unsigned short maxR; 
@@ -44,12 +49,10 @@ struct maze_node_s
 }; 
 
 typedef struct maze_node_s * MazeNode; 
-
 typedef struct maze_s * Maze; 
 #define _MAZE_IMPL_
 #include "MazeSolver.h"
 
-#define MAZE_INITIAL_ROWS 2
 
 
 /// Destroys the Maze and free's any memory that was allocated for the maze
@@ -148,7 +151,7 @@ int Solve_Maze(Maze maze)
     MazeNode cNode; // = (MazeNode)malloc(sizeof(struct maze_node_s)); 
     while(!que_empty(maze->queue))
     {
-        cNode = (MazeNode)que_remove(maze->queue);
+        cNode = (MazeNode)que_pop(maze->queue);
         if(cNode->R == maze->maxR - 1 && cNode->C == maze->maxC - 1)
         {
             solved = true; 
@@ -186,7 +189,7 @@ int Solve_Maze(Maze maze)
     free(cNode); 
     while (!que_empty(maze->queue))
     {
-        free(que_remove(maze->queue)); 
+        free(que_pop(maze->queue)); 
     }
     // returns -1 if not solved 
     return moves; 
