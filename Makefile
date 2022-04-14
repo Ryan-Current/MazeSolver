@@ -1,5 +1,5 @@
 #
-# Created by gmakemake (Ubuntu Jul 25 2014) on Sat Mar 26 21:35:10 2022
+# Created by gmakemake (Ubuntu Jul 25 2014) on Wed Apr 13 22:07:36 2022
 #
 
 #
@@ -50,13 +50,13 @@ CLIBFLAGS =	-lm
 
 
 CPP_FILES =	
-C_FILES =	MazeQueue.c MazeSolver.c mopsolver.c
+C_FILES =	MazeSolver.c QueueADT.c mopsolver.c
 PS_FILES =	
 S_FILES =	
-H_FILES =	MazeQueue.h MazeSolver.h
+H_FILES =	MazeSolver.h QueueADT.h
 SOURCEFILES =	$(H_FILES) $(CPP_FILES) $(C_FILES) $(S_FILES)
 .PRECIOUS:	$(SOURCEFILES)
-OBJFILES =	MazeQueue.o MazeSolver.o 
+OBJFILES =	MazeSolver.o QueueADT.o 
 
 #
 # Main targets
@@ -71,9 +71,9 @@ mopsolver:	mopsolver.o $(OBJFILES)
 # Dependencies
 #
 
-MazeQueue.o:	MazeQueue.h
-MazeSolver.o:	MazeQueue.h MazeSolver.h
-mopsolver.o:	MazeQueue.h MazeSolver.h
+MazeSolver.o:	MazeSolver.h QueueADT.h
+QueueADT.o:	QueueADT.h
+mopsolver.o:	MazeSolver.h
 
 #
 # Housekeeping

@@ -7,8 +7,12 @@
 //
 #define _DEFAULT_SOURCE
 #define MAX_LINE 15
-#define VISITED 'v'
+#define FROM_NORTH 'n'
+#define FROM_SOUTH 's'
+#define FROM_EAST 'e'
+#define FROM_WEST 'w'
 #define PATH '.'
+#define SOLUTION_PATH '+'
 #define BOUNDARY '#'
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +20,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <assert.h>
-#include"MazeQueue.h"
+#include "QueueADT.h"
 
 /// maze_node_s is a struct that represents the current Maze. 
 /// maze is a 2D array of shorts that represents the current maze
@@ -24,11 +28,22 @@
 struct maze_s
 {
     char ** maze; 
-    MazeQueue queue; 
+    QueueADT queue; 
     size_t r_allocation; 
     unsigned short maxC; 
     unsigned short maxR; 
 };
+
+/// maze_node_s is a struct that represents a node on the graph.
+/// R represents the current row
+/// C represents the current column 
+struct maze_node_s
+{
+    unsigned short R; 
+    unsigned short C; 
+}; 
+
+typedef struct maze_node_s * MazeNode; 
 
 typedef struct maze_s * Maze; 
 #define _MAZE_IMPL_
@@ -58,47 +73,54 @@ void Destroy_Maze(Maze maze)
 void add_neighbors(Maze maze, MazeNode node)
 {
     // north
-    if(node_get_currentR(node) > 0)
+    if(node->R > 0)
     {
-        if(maze->maze[node_get_currentR(node) - 1][node_get_currentC(node)] == PATH)
+        if(maze->maze[node->R - 1][node->C] == PATH)
         {
-            MazeNode neighbor = que_create_node(node_get_currentR(node) - 1, node_get_currentC(node), 
-                                                node_get_currentR(node), node_get_currentC(node)); 
+            MazeNode neighbor = (MazeNode)malloc(sizeof(struct maze_node_s)); 
+            neighbor->R = node->R - 1; 
+            neighbor->C = node->C; 
             que_insert(maze->queue, neighbor); 
-            maze->maze[node_get_currentR(node) - 1][node_get_currentC(node)] = VISITED; 
+            maze->maze[node->R - 1][node->C] = FROM_SOUTH; 
         }
     }
+    
     // south
-    if(node_get_currentR(node) < maze->maxR - 1)
+    if(node->R < maze->maxR - 1)
     {
-        if(maze->maze[node_get_currentR(node) + 1][node_get_currentC(node)] == PATH)
+        if(maze->maze[node->R + 1][node->C] == PATH)
         {
-            MazeNode neighbor = que_create_node(node_get_currentR(node) + 1, node_get_currentC(node), 
-                                                node_get_currentR(node), node_get_currentC(node));
+            MazeNode neighbor = (MazeNode)malloc(sizeof(struct maze_node_s)); 
+            neighbor->R = node->R + 1; 
+            neighbor->C = node->C; 
             que_insert(maze->queue, neighbor); 
-            maze->maze[node_get_currentR(node) + 1][node_get_currentC(node)] = VISITED;  
+            maze->maze[node->R + 1][node->C] = FROM_NORTH;  
         }
     }
+    
     // west
-    if(node_get_currentC(node) > 0)
+    if(node->C > 0)
     {
-        if(maze->maze[node_get_currentR(node)][node_get_currentC(node) - 1] == PATH)
+        if(maze->maze[node->R][node->C - 1] == PATH)
         {
-            MazeNode neighbor = que_create_node(node_get_currentR(node), node_get_currentC(node) - 1, 
-                                                node_get_currentR(node), node_get_currentC(node)); 
+            MazeNode neighbor = (MazeNode)malloc(sizeof(struct maze_node_s)); 
+            neighbor->R = node->R; 
+            neighbor->C = node->C - 1; 
             que_insert(maze->queue, neighbor); 
-            maze->maze[node_get_currentR(node)][node_get_currentC(node) - 1] = VISITED; 
+            maze->maze[node->R][node->C - 1] = FROM_EAST; 
         }
     }
+    
     // east
-    if(node_get_currentC(node) < maze->maxC - 1)
+    if(node->C < maze->maxC - 1)
     {
-        if(maze->maze[node_get_currentR(node)][node_get_currentC(node) + 1] == PATH)
+        if(maze->maze[node->R][node->C + 1] == PATH)
         {
-            MazeNode neighbor = que_create_node(node_get_currentR(node), node_get_currentC(node) + 1, 
-                                                node_get_currentR(node), node_get_currentC(node)); 
+            MazeNode neighbor = (MazeNode)malloc(sizeof(struct maze_node_s)); 
+            neighbor->R = node->R; 
+            neighbor->C = node->C + 1; 
             que_insert(maze->queue, neighbor); 
-            maze->maze[node_get_currentR(node)][node_get_currentC(node) + 1] = VISITED;                               
+            maze->maze[node->R][node->C + 1] = FROM_WEST;                               
         }
     }
 
@@ -112,8 +134,10 @@ int Solve_Maze(Maze maze)
     // initialize neighbors list
     if((maze->maxC > 0 || maze->maxR > 0) && maze->maze[0][0] == PATH)
     {
-        MazeNode neighbor = que_create_node(0, 0, -1, -1); 
-            que_insert(maze->queue, neighbor); 
+        MazeNode neighbor = (MazeNode)malloc(sizeof(struct maze_node_s)); 
+        neighbor->R = 0; 
+        neighbor->C = 0; 
+        que_insert(maze->queue, neighbor); 
     }
     else
     {
@@ -121,41 +145,51 @@ int Solve_Maze(Maze maze)
     }
     // bfs
     bool solved = false; 
-    MazeNode cNode; 
+    MazeNode cNode; // = (MazeNode)malloc(sizeof(struct maze_node_s)); 
     while(!que_empty(maze->queue))
     {
-        cNode = que_next(maze->queue);
-        if(node_get_currentR(cNode) == maze->maxR - 1 && node_get_currentC(cNode) == maze->maxC - 1)
+        cNode = (MazeNode)que_remove(maze->queue);
+        if(cNode->R == maze->maxR - 1 && cNode->C == maze->maxC - 1)
         {
             solved = true; 
             break; 
         }
         add_neighbors(maze, cNode); 
+        free(cNode); 
     }
 
-     
+    int moves = -1; 
     if(solved)
     {
         // change path to + and count moves
-        int moves = 1; 
-        while(node_get_currentR(cNode) != 0 || node_get_currentC(cNode) != 0)
+        moves = 1; 
+        while(cNode->R != 0 || cNode->C != 0)
         {
             moves++; 
-            maze->maze[node_get_currentR(cNode)][node_get_currentC(cNode)] = '+'; 
-            cNode = que_find(maze->queue, node_get_previousR(cNode), node_get_previousC(cNode));
-            if(cNode == NULL) 
-            {
+            char current = maze->maze[cNode->R][cNode->C]; 
+            maze->maze[cNode->R][cNode->C] = SOLUTION_PATH; 
+            if(current == FROM_NORTH)
+                cNode->R = cNode->R - 1; 
+            if(current == FROM_SOUTH)
+                cNode->R = cNode->R + 1; 
+            if(current == FROM_EAST)
+                cNode->C = cNode->C + 1; 
+            if(current == FROM_WEST)
+                cNode->C = cNode->C - 1; 
+            
+            if(cNode->R == 0 && cNode->C == 0) 
                 break; 
-            }
         }
-        maze->maze[0][0] = '+'; 
+        maze->maze[0][0] = SOLUTION_PATH; 
+    }
 
-        return moves; 
-    }
-    else
+    free(cNode); 
+    while (!que_empty(maze->queue))
     {
-        return -1; 
+        free(que_remove(maze->queue)); 
     }
+    // returns -1 if not solved 
+    return moves; 
 }
 
 
@@ -175,10 +209,12 @@ void Pretty_Print_Maze(Maze maze, FILE * file)
         else fprintf(file, "  "); 
         for(int j = 0; j < maze->maxC; j++)
         {
-            if(maze->maze[i][j] == VISITED)
-                fprintf(file, "%c ", PATH); 
-            else
+            if(maze->maze[i][j] == PATH ||
+               maze->maze[i][j] == SOLUTION_PATH ||
+               maze->maze[i][j] == BOUNDARY)
                 fprintf(file, "%c ", maze->maze[i][j]); 
+            else 
+                fprintf(file, "%c ", PATH); 
         }
         if(i != maze->maxR-1) fprintf(file, "|\n"); 
         else fprintf(file, " \n"); 
@@ -265,7 +301,7 @@ Maze Create_Maze(FILE * file)
     new->maxR = 0; 
     new->maxC = 0; 
     load_maze(new, file); 
-    new->queue = que_create(new->maxR, new->maxC); 
+    new->queue = que_create(); 
     return new;  
 }
 

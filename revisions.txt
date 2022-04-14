@@ -1,3 +1,9 @@
+commit 99b7cb4df0317e60b2adcb7dca5bbac41eebbeee
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Tue Apr 12 14:05:47 2022 -0400
+
+    Fix: fixed 0, 0 not included in solution bug
+
 commit 80deb10185a3697958b15fe53d03c1e2cdcda3d5
 Author: Ryan Current <rjc7379@cs.rit.edu>
 Date:   Tue Apr 12 14:01:42 2022 -0400
