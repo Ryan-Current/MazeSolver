@@ -1,3 +1,15 @@
+commit e6fea86b59112f2acfa700a9559964d68f33e152
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Thu Apr 14 08:16:43 2022 -0400
+
+    Changed queue to a linked list, achieved the extra credit requirements :)
+
+commit 1a66bdbdce80973fcb7770100c30e262c59f55df
+Author: Ryan Current <rjc7379@cs.rit.edu>
+Date:   Wed Apr 13 22:24:32 2022 -0400
+
+    Converted from MazeQueue to a generic Queue
+
 commit 99b7cb4df0317e60b2adcb7dca5bbac41eebbeee
 Author: Ryan Current <rjc7379@cs.rit.edu>
 Date:   Tue Apr 12 14:05:47 2022 -0400

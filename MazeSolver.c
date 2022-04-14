@@ -184,9 +184,8 @@ int Solve_Maze(Maze maze)
                 break; 
         }
         maze->maze[0][0] = SOLUTION_PATH; 
+        free(cNode); 
     }
-
-    free(cNode); 
     while (!que_empty(maze->queue))
     {
         free(que_pop(maze->queue)); 

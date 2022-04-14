@@ -18,6 +18,7 @@
 #include <stdbool.h>
 
 
+/// prints out the usage message
 void printUsage()
 {
     printf("Usage:\n"
